@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:software_keyboard/keyboard_controller.dart';
+import 'package:on_screen_keyboard/keyboard_controller.dart';
 
-class SoftwareKeyboard<T> extends StatelessWidget {
-  const SoftwareKeyboard({
+class OnScreenKeyboard<T> extends StatelessWidget {
+  const OnScreenKeyboard({
     super.key,
     required this.onValuesChanged,
     this.focusedValueIndex,
