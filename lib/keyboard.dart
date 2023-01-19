@@ -71,67 +71,65 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
         child: Center(
           child: Stack(
             children: [
-              Positioned.fill(
-                child: Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  color: const Color(0xffECE6E9),
-                  child: GestureDetector(
-                    key: keyboardKey,
-                    onPanDown: (details) =>
-                        onShowKey(details.localPosition, context),
-                    onPanUpdate: (details) =>
-                        onShownKeyChanged(details.localPosition, context),
-                    onPanEnd: (details) => setState(
-                      () => {
-                        shownKey = null,
-                        shownKeyPosition = null,
-                        shownTileSize = null,
-                      },
-                    ),
-                    onPanCancel: () => setState(
-                      () => {
-                        shownKey = null,
-                        shownKeyPosition = null,
-                        shownTileSize = null,
-                      },
-                    ),
-                    child: GridView.count(
-                      childAspectRatio:
-                          (MediaQuery.of(context).size.width / 11) / 48,
-                      crossAxisSpacing: 2,
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      crossAxisCount: 11,
-                      children: <Widget>[
-                        ...List.generate(10, (int i) {
-                          final value = i == 9 ? 0 : i + 1;
-                          return InkWell(
-                            onTap: () {
-                              if (widget.focusedValueIndex == null) return;
-                              widget.controller.changeValueAt(
-                                  widget.focusedValueIndex!, value as T);
-                              widget.onValuesChanged(widget.controller.values);
-                            },
-                            child: KeyboardButton(
-                              label: '$value',
-                            ),
-                          );
-                        }),
-                        InkWell(
+              Container(
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                color: const Color(0xffECE6E9),
+                child: GestureDetector(
+                  key: keyboardKey,
+                  onPanDown: (details) =>
+                      onShowKey(details.localPosition, context),
+                  onPanUpdate: (details) =>
+                      onShownKeyChanged(details.localPosition, context),
+                  onPanEnd: (details) => setState(
+                    () => {
+                      shownKey = null,
+                      shownKeyPosition = null,
+                      shownTileSize = null,
+                    },
+                  ),
+                  onPanCancel: () => setState(
+                    () => {
+                      shownKey = null,
+                      shownKeyPosition = null,
+                      shownTileSize = null,
+                    },
+                  ),
+                  child: GridView.count(
+                    childAspectRatio:
+                        (MediaQuery.of(context).size.width / 11) / 48,
+                    crossAxisSpacing: 2,
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    crossAxisCount: 11,
+                    children: <Widget>[
+                      ...List.generate(10, (int i) {
+                        final value = i == 9 ? 0 : i + 1;
+                        return InkWell(
                           onTap: () {
                             if (widget.focusedValueIndex == null) return;
-                            widget.controller.onDelete(
-                              widget.focusedValueIndex!,
-                            );
+                            widget.controller.changeValueAt(
+                                widget.focusedValueIndex!, value as T);
                             widget.onValuesChanged(widget.controller.values);
                           },
-                          child: const KeyboardButton(
-                            label: 'X',
-                            iconData: Icons.backspace_outlined,
+                          child: KeyboardButton(
+                            label: '$value',
                           ),
+                        );
+                      }),
+                      InkWell(
+                        onTap: () {
+                          if (widget.focusedValueIndex == null) return;
+                          widget.controller.onDelete(
+                            widget.focusedValueIndex!,
+                          );
+                          widget.onValuesChanged(widget.controller.values);
+                        },
+                        child: const KeyboardButton(
+                          label: 'X',
+                          iconData: Icons.backspace_outlined,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
