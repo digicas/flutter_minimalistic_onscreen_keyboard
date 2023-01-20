@@ -70,6 +70,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
         ),
         child: Center(
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
               Container(
                 height: 50,
