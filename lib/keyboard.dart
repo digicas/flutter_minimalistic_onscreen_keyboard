@@ -65,19 +65,19 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     print(
       'resolveValuesUpdate $value',
     );
-    if (value != 'X') {
+    if (value != '⌫') {
       print('Enter Value');
-      enterValue(value);
+      enterValue(1 as T);
     } else {
       print('remove Value');
       removeValue();
     }
   }
 
-  void enterValue(String value) {
+  void enterValue(T value) {
     if (widget.focusedValueIndex == null) return;
     print('Enter value focused Value != null');
-    widget.controller.changeValueAt(widget.focusedValueIndex!, value as T);
+    widget.controller.changeValueAt(widget.focusedValueIndex!, value);
     print('Enter value changeValueAt');
     widget.onValuesChanged(widget.controller.values);
   }
