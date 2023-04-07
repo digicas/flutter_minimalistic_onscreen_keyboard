@@ -62,9 +62,14 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
   }
 
   void resolveValuesUpdate(String value) {
+    print(
+      'resolveValuesUpdate $value',
+    );
     if (value != 'X') {
+      print('Enter Value');
       enterValue(value);
     } else {
+      print('remove Value');
       removeValue();
     }
   }
@@ -105,12 +110,14 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                 color: const Color(0xffECE6E9),
                 child: Listener(
                   onPointerDown: (event) {
+                    print('onPointerDown');
                     setState(() {
                       isEnabled = true;
                     });
                     onShowKey(event.localPosition, context);
                   },
                   onPointerUp: (event) {
+                    print('OnPointerUp');
                     setState(() => isEnabled = false);
                     resolveValuesUpdate(shownKey ?? '');
                     HapticFeedback.lightImpact();
