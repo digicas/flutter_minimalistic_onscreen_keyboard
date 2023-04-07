@@ -46,8 +46,9 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
 
     shownTileSize = tileSize;
     final currentColumn = (pos.dx / tileSize).floor();
-    
-    final chars = List.generate(9, (index) => '${index + 1}')..addAll(['0','⌫']);
+
+    final chars = List.generate(9, (index) => '${index + 1}')
+      ..addAll(['0', '⌫']);
     shownKey = chars[currentColumn];
     var x = (currentColumn * tileSize);
 
@@ -87,6 +88,13 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       shownKey = null,
                       shownKeyPosition = null,
                       shownTileSize = null,
+                      if (widget.focusedValueIndex != null)
+                        {
+                          widget.controller.onDelete(
+                            widget.focusedValueIndex!,
+                          ),
+                          widget.onValuesChanged(widget.controller.values),
+                        }
                     },
                   ),
                   onPanCancel: () => setState(
@@ -94,6 +102,13 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       shownKey = null,
                       shownKeyPosition = null,
                       shownTileSize = null,
+                      if (widget.focusedValueIndex != null)
+                        {
+                          widget.controller.onDelete(
+                            widget.focusedValueIndex!,
+                          ),
+                          widget.onValuesChanged(widget.controller.values),
+                        }
                     },
                   ),
                   child: GridView.count(
@@ -105,30 +120,13 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                     children: <Widget>[
                       ...List.generate(10, (int i) {
                         final value = i == 9 ? 0 : i + 1;
-                        return InkWell(
-                          onTap: () {
-                            if (widget.focusedValueIndex == null) return;
-                            widget.controller.changeValueAt(
-                                widget.focusedValueIndex!, value as T);
-                            widget.onValuesChanged(widget.controller.values);
-                          },
-                          child: KeyboardButton(
-                            label: '$value',
-                          ),
+                        return KeyboardButton(
+                          label: '$value',
                         );
                       }),
-                      InkWell(
-                        onTap: () {
-                          if (widget.focusedValueIndex == null) return;
-                          widget.controller.onDelete(
-                            widget.focusedValueIndex!,
-                          );
-                          widget.onValuesChanged(widget.controller.values);
-                        },
-                        child: const KeyboardButton(
-                          label: 'X',
-                          iconData: Icons.backspace_outlined,
-                        ),
+                      const KeyboardButton(
+                        label: 'X',
+                        iconData: Icons.backspace_outlined,
                       ),
                     ],
                   ),
@@ -144,10 +142,13 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       top: 0,
                       left: 0,
                       child: Transform.translate(
-                        offset:
-                            Offset(shownKey != '⌫' ? shownKeyPosition!.dx : shownKeyPosition!.dx - 75 , -75),
+                        offset: Offset(
+                            shownKey != '⌫'
+                                ? shownKeyPosition!.dx
+                                : shownKeyPosition!.dx - 75,
+                            -75),
                         child: Container(
-                          width: shownKey != '⌫' ? (width / 11 ) * 1.5: 100,
+                          width: shownKey != '⌫' ? (width / 11) * 1.5 : 100,
                           height: 70,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
