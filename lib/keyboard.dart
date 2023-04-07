@@ -76,12 +76,15 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
 
   void enterValue(String value) {
     if (widget.focusedValueIndex == null) return;
+    print('Enter value focused Value != null');
     widget.controller.changeValueAt(widget.focusedValueIndex!, value as T);
+    print('Enter value changeValueAt');
     widget.onValuesChanged(widget.controller.values);
   }
 
   void removeValue() {
     if (widget.focusedValueIndex != null) {
+      print('Remove value inside condition');
       widget.controller.onDelete(
         widget.focusedValueIndex!,
       );
@@ -120,11 +123,11 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                     print('OnPointerUp');
                     setState(() {
                       isEnabled = false;
-                    resolveValuesUpdate(shownKey ?? '');
                     HapticFeedback.lightImpact();
                     shownKey = null;
                     shownKeyPosition = null;
                     shownTileSize = null;
+                    resolveValuesUpdate(shownKey ?? '');
                     });
                   },
                   child: GestureDetector(
