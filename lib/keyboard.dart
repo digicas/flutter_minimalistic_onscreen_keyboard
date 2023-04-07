@@ -123,12 +123,12 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                     print('OnPointerUp');
                     setState(() {
                       isEnabled = false;
+                    resolveValuesUpdate(shownKey ?? '');
                     HapticFeedback.lightImpact();
                     shownKey = null;
                     shownKeyPosition = null;
                     shownTileSize = null;
                     print('Shown Key onPointerUP $shownKey');
-                    resolveValuesUpdate(shownKey ?? '');
                     });
                   },
                   child: GestureDetector(
