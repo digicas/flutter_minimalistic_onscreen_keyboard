@@ -60,6 +60,29 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     onShowKey(pos, context);
   }
 
+  void resolveValuesUpdate(String value) {
+    if (value != 'X') {
+      enterValue(value);
+    } else {
+      removeValue();
+    }
+  }
+
+  void enterValue(String value) {
+    if (widget.focusedValueIndex == null) return;
+    widget.controller.changeValueAt(widget.focusedValueIndex!, value as T);
+    widget.onValuesChanged(widget.controller.values);
+  }
+
+  void removeValue() {
+    if (widget.focusedValueIndex != null) {
+      widget.controller.onDelete(
+        widget.focusedValueIndex!,
+      );
+      widget.onValuesChanged(widget.controller.values);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -88,13 +111,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       shownKey = null,
                       shownKeyPosition = null,
                       shownTileSize = null,
-                      if (widget.focusedValueIndex != null)
-                        {
-                          widget.controller.onDelete(
-                            widget.focusedValueIndex!,
-                          ),
-                          widget.onValuesChanged(widget.controller.values),
-                        }
+                      resolveValuesUpdate(shownKey ?? ''),
                     },
                   ),
                   onPanCancel: () => setState(
@@ -102,13 +119,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       shownKey = null,
                       shownKeyPosition = null,
                       shownTileSize = null,
-                      if (widget.focusedValueIndex != null)
-                        {
-                          widget.controller.onDelete(
-                            widget.focusedValueIndex!,
-                          ),
-                          widget.onValuesChanged(widget.controller.values),
-                        }
+                      resolveValuesUpdate(shownKey ?? ''),
                     },
                   ),
                   child: GridView.count(
