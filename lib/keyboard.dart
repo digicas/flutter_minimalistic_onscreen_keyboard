@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:on_screen_keyboard/keyboard_controller.dart';
 
 class OnScreenKeyboard<T> extends StatefulWidget {
@@ -47,9 +46,8 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
 
     shownTileSize = tileSize;
     final currentColumn = (pos.dx / tileSize).floor();
-
-    final chars = List.generate(9, (index) => '${index + 1}')
-      ..addAll(['0', '⌫']);
+    
+    final chars = List.generate(9, (index) => '${index + 1}')..addAll(['0','⌫']);
     shownKey = chars[currentColumn];
     var x = (currentColumn * tileSize);
 
@@ -60,39 +58,6 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
   void onShownKeyChanged(Offset pos, BuildContext context) {
     onShowKey(pos, context);
   }
-
-  void resolveValuesUpdate(String value) {
-    print(
-      'resolveValuesUpdate $value',
-    );
-    if (value == '⌫') {
-      print('remove Value');
-      removeValue();
-    } else {
-      print('Enter Value');
-      enterValue(value as T);
-    }
-  }
-
-  void enterValue(T value) {
-    if (widget.focusedValueIndex == null) return;
-    print('Enter value focused Value != null');
-    widget.controller.changeValueAt(widget.focusedValueIndex!, value);
-    print('Enter value changeValueAt');
-    widget.onValuesChanged(widget.controller.values);
-  }
-
-  void removeValue() {
-    if (widget.focusedValueIndex != null) {
-      print('Remove value inside condition');
-      widget.controller.onDelete(
-        widget.focusedValueIndex!,
-      );
-      widget.onValuesChanged(widget.controller.values);
-    }
-  }
-
-  bool isEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,51 +76,63 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                 height: 50,
                 width: MediaQuery.of(context).size.width,
                 color: const Color(0xffECE6E9),
-                child: Listener(
-                  onPointerDown: (event) {
-                    print('onPointerDown');
-                    setState(() {
-                      isEnabled = true;
-                    });
-                    onShowKey(event.localPosition, context);
-                  },
-                  onPointerUp: (event) {
-                    print('OnPointerUp');
-                    setState(() {
-                      isEnabled = false;
-                    resolveValuesUpdate(shownKey ?? '');
-                    HapticFeedback.lightImpact();
-                    shownKey = null;
-                    shownKeyPosition = null;
-                    shownTileSize = null;
-                    print('Shown Key onPointerUP $shownKey');
-                    });
-                  },
-                  child: GestureDetector(
-                    key: keyboardKey,
-                    onPanUpdate: isEnabled
-                        ? (details) =>
-                            {onShownKeyChanged(details.localPosition, context)}
-                        : (_) {},
-                    child: GridView.count(
-                      childAspectRatio:
-                          (MediaQuery.of(context).size.width / 11) / 48,
-                      crossAxisSpacing: 2,
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      crossAxisCount: 11,
-                      children: <Widget>[
-                        ...List.generate(10, (int i) {
-                          final value = i == 9 ? 0 : i + 1;
-                          return KeyboardButton(
+                child: GestureDetector(
+                  key: keyboardKey,
+                  onPanDown: (details) =>
+                      onShowKey(details.localPosition, context),
+                  onPanUpdate: (details) =>
+                      onShownKeyChanged(details.localPosition, context),
+                  onPanEnd: (details) => setState(
+                    () => {
+                      shownKey = null,
+                      shownKeyPosition = null,
+                      shownTileSize = null,
+                    },
+                  ),
+                  onPanCancel: () => setState(
+                    () => {
+                      shownKey = null,
+                      shownKeyPosition = null,
+                      shownTileSize = null,
+                    },
+                  ),
+                  child: GridView.count(
+                    childAspectRatio:
+                        (MediaQuery.of(context).size.width / 11) / 48,
+                    crossAxisSpacing: 2,
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    crossAxisCount: 11,
+                    children: <Widget>[
+                      ...List.generate(10, (int i) {
+                        final value = i == 9 ? 0 : i + 1;
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            if (widget.focusedValueIndex == null) return;
+                            widget.controller.changeValueAt(
+                                widget.focusedValueIndex!, value as T);
+                            widget.onValuesChanged(widget.controller.values);
+                          },
+                          child: KeyboardButton(
                             label: '$value',
+                          ),
+                        );
+                      }),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          if (widget.focusedValueIndex == null) return;
+                          widget.controller.onDelete(
+                            widget.focusedValueIndex!,
                           );
-                        }),
-                        const KeyboardButton(
+                          widget.onValuesChanged(widget.controller.values);
+                        },
+                        child: const KeyboardButton(
                           label: 'X',
                           iconData: Icons.backspace_outlined,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -169,13 +146,10 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       top: 0,
                       left: 0,
                       child: Transform.translate(
-                        offset: Offset(
-                            shownKey != '⌫'
-                                ? shownKeyPosition!.dx
-                                : shownKeyPosition!.dx - 75,
-                            -75),
+                        offset:
+                            Offset(shownKey != '⌫' ? shownKeyPosition!.dx : shownKeyPosition!.dx - 75 , -75),
                         child: Container(
-                          width: shownKey != '⌫' ? (width / 11) * 1.5 : 100,
+                          width: shownKey != '⌫' ? (width / 11 ) * 1.5: 100,
                           height: 70,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
