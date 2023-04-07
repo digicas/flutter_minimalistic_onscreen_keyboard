@@ -65,12 +65,12 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     print(
       'resolveValuesUpdate $value',
     );
-    if (value != '⌫') {
-      print('Enter Value');
-      enterValue(1 as T);
-    } else {
+    if (value == '⌫') {
       print('remove Value');
       removeValue();
+    } else {
+      print('Enter Value');
+      enterValue(value as T);
     }
   }
 
