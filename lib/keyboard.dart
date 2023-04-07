@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:on_screen_keyboard/keyboard_controller.dart';
 
 class OnScreenKeyboard<T> extends StatefulWidget {
@@ -83,6 +84,8 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     }
   }
 
+  bool isEnabled = false;
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -100,46 +103,46 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                 height: 50,
                 width: MediaQuery.of(context).size.width,
                 color: const Color(0xffECE6E9),
-                child: GestureDetector(
-                  key: keyboardKey,
-                  onPanDown: (details) =>
-                      onShowKey(details.localPosition, context),
-                  onPanUpdate: (details) =>
-                      onShownKeyChanged(details.localPosition, context),
-                  onPanEnd: (details) => setState(
-                    () => {
-                      shownKey = null,
-                      shownKeyPosition = null,
-                      shownTileSize = null,
-                      resolveValuesUpdate(shownKey ?? ''),
-                    },
-                  ),
-                  onPanCancel: () => setState(
-                    () => {
-                      shownKey = null,
-                      shownKeyPosition = null,
-                      shownTileSize = null,
-                      resolveValuesUpdate(shownKey ?? ''),
-                    },
-                  ),
-                  child: GridView.count(
-                    childAspectRatio:
-                        (MediaQuery.of(context).size.width / 11) / 48,
-                    crossAxisSpacing: 2,
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    crossAxisCount: 11,
-                    children: <Widget>[
-                      ...List.generate(10, (int i) {
-                        final value = i == 9 ? 0 : i + 1;
-                        return KeyboardButton(
-                          label: '$value',
-                        );
-                      }),
-                      const KeyboardButton(
-                        label: 'X',
-                        iconData: Icons.backspace_outlined,
-                      ),
-                    ],
+                child: Listener(
+                  onPointerDown: (event) {
+                    setState(() {
+                      isEnabled = true;
+                    });
+                    onShowKey(event.localPosition, context);
+                  },
+                  onPointerUp: (event) {
+                    setState(() => isEnabled = false);
+                    resolveValuesUpdate(shownKey ?? '');
+                    HapticFeedback.lightImpact();
+                    shownKey = null;
+                    shownKeyPosition = null;
+                    shownTileSize = null;
+                  },
+                  child: GestureDetector(
+                    key: keyboardKey,
+                    onPanUpdate: isEnabled
+                        ? (details) =>
+                            {onShownKeyChanged(details.localPosition, context)}
+                        : (_) {},
+                    child: GridView.count(
+                      childAspectRatio:
+                          (MediaQuery.of(context).size.width / 11) / 48,
+                      crossAxisSpacing: 2,
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      crossAxisCount: 11,
+                      children: <Widget>[
+                        ...List.generate(10, (int i) {
+                          final value = i == 9 ? 0 : i + 1;
+                          return KeyboardButton(
+                            label: '$value',
+                          );
+                        }),
+                        const KeyboardButton(
+                          label: 'X',
+                          iconData: Icons.backspace_outlined,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
