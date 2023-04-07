@@ -127,6 +127,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                     shownKey = null;
                     shownKeyPosition = null;
                     shownTileSize = null;
+                    print('Shown Key onPointerUP $shownKey');
                     resolveValuesUpdate(shownKey ?? '');
                     });
                   },
