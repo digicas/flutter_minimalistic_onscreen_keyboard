@@ -15,7 +15,8 @@ class OnScreenKeyboard<T> extends StatefulWidget {
   @override
   State<OnScreenKeyboard<T>> createState() => _OnScreenKeyboardState<T>();
 
-  static final chars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '⌫'];
+  static final List<String> chars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+  static const specialChar = '⌫';
 }
 
 class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
@@ -49,7 +50,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     shownTileSize = tileSize;
     final currentColumn = (pos.dx / tileSize).floor();
 
-    shownKey = OnScreenKeyboard.chars[currentColumn];
+    shownKey = [...OnScreenKeyboard.chars, OnScreenKeyboard.specialChar].elementAt(currentColumn);
     var x = (currentColumn * tileSize);
 
     shownKeyPosition = Offset(x, -50);
@@ -91,12 +92,13 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       shownTileSize = null;
                       return;
                     }
-                    if (shownKey == '⌫') {
+                    if (shownKey == OnScreenKeyboard.specialChar) {
                       widget.controller.onDelete(
                         widget.focusedValueIndex!,
                       );
                       widget.onValuesChanged(widget.controller.values);
-                    } else {
+                    } 
+                    if(OnScreenKeyboard.chars.contains(shownKey)){
                       print(shownKey);
                       widget.controller.changeValueAt(
                           widget.focusedValueIndex!, shownKey as T);
@@ -126,40 +128,9 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       children: List.generate(
                         11,
                         (index) => KeyboardButton(
-                          label: OnScreenKeyboard.chars[index],
+                          label: [...OnScreenKeyboard.chars, OnScreenKeyboard.specialChar][index],
                         ),
                       ),
-                      // children: <Widget>[
-                      //   ...List.generate(10, (int i) {
-                      //     final value = i == 9 ? 0 : i + 1;
-                      //     return GestureDetector(
-                      //       behavior: HitTestBehavior.opaque,
-                      //       onTap: () {
-                      //         if (widget.focusedValueIndex == null) return;
-                      //         widget.controller.changeValueAt(
-                      //             widget.focusedValueIndex!, value as T);
-                      //         widget.onValuesChanged(widget.controller.values);
-                      //       },
-                      //       child: KeyboardButton(
-                      //         label: '$value',
-                      //       ),
-                      //     );
-                      //   }),
-                      //   GestureDetector(
-                      //     behavior: HitTestBehavior.opaque,
-                      //     onTap: () {
-                      //       if (widget.focusedValueIndex == null) return;
-                      //       widget.controller.onDelete(
-                      //         widget.focusedValueIndex!,
-                      //       );
-                      //       widget.onValuesChanged(widget.controller.values);
-                      //     },
-                      //     child: const KeyboardButton(
-                      //       label: 'X',
-                      //       iconData: Icons.backspace_outlined,
-                      //     ),
-                      //   ),
-                      // ],
                     ),
                   ),
                 ),
