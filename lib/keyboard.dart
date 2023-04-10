@@ -15,18 +15,7 @@ class OnScreenKeyboard<T> extends StatefulWidget {
   @override
   State<OnScreenKeyboard<T>> createState() => _OnScreenKeyboardState<T>();
 
-  static final List<String> chars = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '0'
-  ];
+  static final List<String> chars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
   static const specialChar = '⌫';
 }
 
@@ -61,8 +50,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     shownTileSize = tileSize;
     final currentColumn = (pos.dx / tileSize).floor();
 
-    shownKey = [...OnScreenKeyboard.chars, OnScreenKeyboard.specialChar]
-        .elementAt(currentColumn);
+    shownKey = [...OnScreenKeyboard.chars, OnScreenKeyboard.specialChar].elementAt(currentColumn);
     var x = (currentColumn * tileSize);
 
     shownKeyPosition = Offset(x, -50);
@@ -94,12 +82,6 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                     isEnabled = true;
                     onShowKey(event.localPosition, context);
                   });
-                  if (OnScreenKeyboard.chars.contains(shownKey)) {
-                    print(shownKey);
-                    widget.controller.changeValueAt(
-                        widget.focusedValueIndex!, shownKey as T);
-                    widget.onValuesChanged(widget.controller.values);
-                  }
                 },
                 onPointerUp: (event) {
                   setState(() async {
@@ -114,6 +96,12 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       widget.controller.onDelete(
                         widget.focusedValueIndex!,
                       );
+                      widget.onValuesChanged(widget.controller.values);
+                    } 
+                    if(OnScreenKeyboard.chars.contains(shownKey)){
+                      print('$shownKey index: ${widget.focusedValueIndex}');
+                      widget.controller.changeValueAt(
+                          widget.focusedValueIndex!, shownKey as T);
                       widget.onValuesChanged(widget.controller.values);
                     }
                     shownKey = null;
@@ -140,10 +128,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       children: List.generate(
                         11,
                         (index) => KeyboardButton(
-                          label: [
-                            ...OnScreenKeyboard.chars,
-                            OnScreenKeyboard.specialChar
-                          ][index],
+                          label: [...OnScreenKeyboard.chars, OnScreenKeyboard.specialChar][index],
                         ),
                       ),
                     ),
