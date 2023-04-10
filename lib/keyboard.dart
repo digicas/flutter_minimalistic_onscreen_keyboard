@@ -60,6 +60,13 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     onShowKey(pos, context);
   }
 
+  Future<void> onInput() async {
+    print(shownKey);
+    widget.controller.changeValueAt(widget.focusedValueIndex!, shownKey as T);
+    widget.onValuesChanged(widget.controller.values);
+    return;
+  }
+
   bool isEnabled = false;
 
   @override
@@ -83,7 +90,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                   });
                 },
                 onPointerUp: (event) {
-                  setState(() {
+                  setState(() async {
                     isEnabled = false;
                     if (widget.focusedValueIndex == null) return;
                     if (shownKey == '⌫') {
@@ -92,11 +99,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       );
                       widget.onValuesChanged(widget.controller.values);
                     } else {
-                      print(shownKey);
-
-                      widget.controller.changeValueAt(
-                          widget.focusedValueIndex!, shownKey as T);
-                      widget.onValuesChanged(widget.controller.values);
+                      await onInput();
                     }
                     shownKey = null;
                     shownKeyPosition = null;
