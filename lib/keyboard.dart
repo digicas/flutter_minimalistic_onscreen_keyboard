@@ -60,13 +60,6 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     onShowKey(pos, context);
   }
 
-  onInput()  {
-    print(shownKey);
-    widget.controller.changeValueAt(widget.focusedValueIndex!, shownKey as T);
-    widget.onValuesChanged(widget.controller.values);
-    return;
-  }
-
   bool isEnabled = false;
 
   @override
@@ -92,18 +85,26 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                 onPointerUp: (event) {
                   setState(() async {
                     isEnabled = false;
-                    if (widget.focusedValueIndex == null) return;
+                    if (widget.focusedValueIndex == null) {
+                      shownKey = null;
+                      shownKeyPosition = null;
+                      shownTileSize = null;
+                      return;
+                    }
                     if (shownKey == '⌫') {
                       widget.controller.onDelete(
                         widget.focusedValueIndex!,
                       );
                       widget.onValuesChanged(widget.controller.values);
                     } else {
-                      onInput();
+                      print(shownKey);
+                      widget.controller.changeValueAt(
+                          widget.focusedValueIndex!, shownKey as T);
+                      widget.onValuesChanged(widget.controller.values);
                     }
-                    // shownKey = null;
-                    // shownKeyPosition = null;
-                    // shownTileSize = null;
+                    shownKey = null;
+                    shownKeyPosition = null;
+                    shownTileSize = null;
                   });
                 },
                 child: GestureDetector(
