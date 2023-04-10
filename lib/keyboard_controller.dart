@@ -12,6 +12,7 @@ class KeyboardController<T> {
   late List<int> valuesMaxLengths;
 
   void changeValueAt(int index, T value) {
+    print('Changed value at $index to $value');
     final oldValue = values.elementAt(index);
     if (oldValue is String && oldValue.length >= valuesMaxLengths[index] ||
         oldValue is int && oldValue.length() >= valuesMaxLengths[index]) return;
@@ -23,6 +24,7 @@ class KeyboardController<T> {
   }
 
   void onDelete(int index) {
+    print('OnDelete $index');
     final oldValue = values.elementAt(index);
 
     if (oldValue == null) return;

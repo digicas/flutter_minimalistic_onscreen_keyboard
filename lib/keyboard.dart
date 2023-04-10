@@ -14,6 +14,8 @@ class OnScreenKeyboard<T> extends StatefulWidget {
 
   @override
   State<OnScreenKeyboard<T>> createState() => _OnScreenKeyboardState<T>();
+
+  static final chars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '⌫'];
 }
 
 class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
@@ -46,9 +48,8 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
 
     shownTileSize = tileSize;
     final currentColumn = (pos.dx / tileSize).floor();
-    
-    final chars = List.generate(9, (index) => '${index + 1}')..addAll(['0','⌫']);
-    shownKey = chars[currentColumn];
+
+    shownKey = OnScreenKeyboard.chars[currentColumn];
     var x = (currentColumn * tileSize);
 
     shownKeyPosition = Offset(x, -50);
@@ -58,6 +59,8 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
   void onShownKeyChanged(Offset pos, BuildContext context) {
     onShowKey(pos, context);
   }
+
+  bool isEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -72,67 +75,86 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                color: const Color(0xffECE6E9),
+              Listener(
+                onPointerDown: (event) {
+                  setState(() {
+                    isEnabled = true;
+                    onShowKey(event.localPosition, context);
+                  });
+                },
+                onPointerUp: (event) {
+                  setState(() {
+                    isEnabled = false;
+                    if (widget.focusedValueIndex == null) return;
+                    if (shownKey != '⌫') {
+                      widget.controller.changeValueAt(
+                          widget.focusedValueIndex!, shownKey as T);
+                      widget.onValuesChanged(widget.controller.values);
+                    } else {
+                      widget.controller.onDelete(
+                        widget.focusedValueIndex!,
+                      );
+                      widget.onValuesChanged(widget.controller.values);
+                    }
+                  });
+                  shownKey = null;
+                  shownKeyPosition = null;
+                  shownTileSize = null;
+                },
                 child: GestureDetector(
                   key: keyboardKey,
-                  onPanDown: (details) =>
-                      onShowKey(details.localPosition, context),
-                  onPanUpdate: (details) =>
-                      onShownKeyChanged(details.localPosition, context),
-                  onPanEnd: (details) => setState(
-                    () => {
-                      shownKey = null,
-                      shownKeyPosition = null,
-                      shownTileSize = null,
-                    },
-                  ),
-                  onPanCancel: () => setState(
-                    () => {
-                      shownKey = null,
-                      shownKeyPosition = null,
-                      shownTileSize = null,
-                    },
-                  ),
-                  child: GridView.count(
-                    childAspectRatio:
-                        (MediaQuery.of(context).size.width / 11) / 48,
-                    crossAxisSpacing: 2,
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    crossAxisCount: 11,
-                    children: <Widget>[
-                      ...List.generate(10, (int i) {
-                        final value = i == 9 ? 0 : i + 1;
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            if (widget.focusedValueIndex == null) return;
-                            widget.controller.changeValueAt(
-                                widget.focusedValueIndex!, value as T);
-                            widget.onValuesChanged(widget.controller.values);
-                          },
-                          child: KeyboardButton(
-                            label: '$value',
-                          ),
-                        );
-                      }),
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          if (widget.focusedValueIndex == null) return;
-                          widget.controller.onDelete(
-                            widget.focusedValueIndex!,
-                          );
-                          widget.onValuesChanged(widget.controller.values);
-                        },
-                        child: const KeyboardButton(
-                          label: 'X',
-                          iconData: Icons.backspace_outlined,
+                  onPanUpdate: isEnabled
+                      ? (details) =>
+                          {onShownKeyChanged(details.localPosition, context)}
+                      : (_) {},
+                  child: Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    color: const Color(0xffECE6E9),
+                    child: GridView.count(
+                      childAspectRatio:
+                          (MediaQuery.of(context).size.width / 11) / 48,
+                      crossAxisSpacing: 2,
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      crossAxisCount: 11,
+                      children: List.generate(
+                        11,
+                        (index) => KeyboardButton(
+                          label: OnScreenKeyboard.chars[index],
                         ),
                       ),
-                    ],
+                      // children: <Widget>[
+                      //   ...List.generate(10, (int i) {
+                      //     final value = i == 9 ? 0 : i + 1;
+                      //     return GestureDetector(
+                      //       behavior: HitTestBehavior.opaque,
+                      //       onTap: () {
+                      //         if (widget.focusedValueIndex == null) return;
+                      //         widget.controller.changeValueAt(
+                      //             widget.focusedValueIndex!, value as T);
+                      //         widget.onValuesChanged(widget.controller.values);
+                      //       },
+                      //       child: KeyboardButton(
+                      //         label: '$value',
+                      //       ),
+                      //     );
+                      //   }),
+                      //   GestureDetector(
+                      //     behavior: HitTestBehavior.opaque,
+                      //     onTap: () {
+                      //       if (widget.focusedValueIndex == null) return;
+                      //       widget.controller.onDelete(
+                      //         widget.focusedValueIndex!,
+                      //       );
+                      //       widget.onValuesChanged(widget.controller.values);
+                      //     },
+                      //     child: const KeyboardButton(
+                      //       label: 'X',
+                      //       iconData: Icons.backspace_outlined,
+                      //     ),
+                      //   ),
+                      // ],
+                    ),
                   ),
                 ),
               ),
@@ -146,10 +168,13 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       top: 0,
                       left: 0,
                       child: Transform.translate(
-                        offset:
-                            Offset(shownKey != '⌫' ? shownKeyPosition!.dx : shownKeyPosition!.dx - 75 , -75),
+                        offset: Offset(
+                            shownKey != '⌫'
+                                ? shownKeyPosition!.dx
+                                : shownKeyPosition!.dx - 75,
+                            -75),
                         child: Container(
-                          width: shownKey != '⌫' ? (width / 11 ) * 1.5: 100,
+                          width: shownKey != '⌫' ? (width / 11) * 1.5 : 100,
                           height: 70,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
