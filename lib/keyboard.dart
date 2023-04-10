@@ -60,7 +60,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     onShowKey(pos, context);
   }
 
-  Future<void> onInput() async {
+  onInput()  {
     print(shownKey);
     widget.controller.changeValueAt(widget.focusedValueIndex!, shownKey as T);
     widget.onValuesChanged(widget.controller.values);
@@ -99,11 +99,11 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       );
                       widget.onValuesChanged(widget.controller.values);
                     } else {
-                      await onInput();
+                      onInput();
                     }
-                    shownKey = null;
-                    shownKeyPosition = null;
-                    shownTileSize = null;
+                    // shownKey = null;
+                    // shownKeyPosition = null;
+                    // shownTileSize = null;
                   });
                 },
                 child: GestureDetector(
