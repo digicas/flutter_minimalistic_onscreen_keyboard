@@ -54,6 +54,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     var x = (currentColumn * tileSize);
 
     shownKeyPosition = Offset(x, -50);
+    widget.controller.changeValueAt(widget.focusedValueIndex!, (shownKey ?? 'a') as T);
     setState(() {});
   }
 
