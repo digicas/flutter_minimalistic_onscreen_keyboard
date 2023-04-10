@@ -98,10 +98,10 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                           widget.focusedValueIndex!, shownKey as T);
                       widget.onValuesChanged(widget.controller.values);
                     }
+                    shownKey = null;
+                    shownKeyPosition = null;
+                    shownTileSize = null;
                   });
-                  shownKey = null;
-                  shownKeyPosition = null;
-                  shownTileSize = null;
                 },
                 child: GestureDetector(
                   key: keyboardKey,
