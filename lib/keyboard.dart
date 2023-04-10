@@ -86,15 +86,16 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                   setState(() {
                     isEnabled = false;
                     if (widget.focusedValueIndex == null) return;
-                    if (shownKey != '⌫') {
-                      print('shonwKey');
-                      widget.controller.changeValueAt(
-                          widget.focusedValueIndex!, shownKey as T);
-                      widget.onValuesChanged(widget.controller.values);
-                    } else {
+                    if (shownKey == '⌫') {
                       widget.controller.onDelete(
                         widget.focusedValueIndex!,
                       );
+                      widget.onValuesChanged(widget.controller.values);
+                    } else {
+                      print(shownKey);
+
+                      widget.controller.changeValueAt(
+                          widget.focusedValueIndex!, shownKey as T);
                       widget.onValuesChanged(widget.controller.values);
                     }
                   });
