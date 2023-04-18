@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:on_screen_keyboard/keyboard_controller.dart';
+import './keyboard_controller.dart';
 
 class OnScreenKeyboard<T> extends StatefulWidget {
   const OnScreenKeyboard({
@@ -16,6 +16,7 @@ class OnScreenKeyboard<T> extends StatefulWidget {
   State<OnScreenKeyboard<T>> createState() => _OnScreenKeyboardState<T>();
 
   static final List<String> chars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+  // static const specialChar = 'B';
   static const specialChar = '⌫';
 }
 
@@ -54,7 +55,6 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
     var x = (currentColumn * tileSize);
 
     shownKeyPosition = Offset(x, -50);
-    widget.controller.changeValueAt(widget.focusedValueIndex!, (shownKey ?? 'a') as T);
     setState(() {});
   }
 
@@ -85,7 +85,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                   });
                 },
                 onPointerUp: (event) {
-                  setState(() async {
+                  setState(() {
                     isEnabled = false;
                     if (widget.focusedValueIndex == null) {
                       shownKey = null;
@@ -102,7 +102,7 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                     if(OnScreenKeyboard.chars.contains(shownKey)){
                       print('$shownKey index: ${widget.focusedValueIndex}');
                       widget.controller.changeValueAt(
-                          widget.focusedValueIndex!, shownKey as T);
+                          widget.focusedValueIndex!, int.parse("$shownKey"));
                       widget.onValuesChanged(widget.controller.values);
                     }
                     shownKey = null;

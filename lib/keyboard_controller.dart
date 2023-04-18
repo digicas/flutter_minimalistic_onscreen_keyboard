@@ -11,17 +11,28 @@ class KeyboardController<T> {
   final List<T?> values;
   late List<int> valuesMaxLengths;
 
-  void changeValueAt(int index, T value) {
-    print('Changed value at $index to $value');
+  void changeValueAt(int index, int value) {
     final oldValue = values.elementAt(index);
-    if (oldValue is String && oldValue.length >= valuesMaxLengths[index] ||
-        oldValue is int && oldValue.length() >= valuesMaxLengths[index]) return;
     if (oldValue == null) {
-      values[index] = value;
+      values[index] = int.parse("$value") as T;
       return;
     }
+    if (oldValue.toString().length >= valuesMaxLengths[index]) return;
+
     values[index] = int.parse('$oldValue$value') as T;
   }
+
+  // void changeValueAt(int index, T value) {
+  //   print('Changed value at $index to $value');
+  //   final oldValue = values.elementAt(index);
+  //   if (oldValue is String && oldValue.length >= valuesMaxLengths[index] ||
+  //       oldValue is int && oldValue.length() >= valuesMaxLengths[index]) return;
+  //   if (oldValue == null) {
+  //     values[index] = int.parse("$value") as T;
+  //     return;
+  //   }
+  //   values[index] = int.parse('$oldValue$value') as T;
+  // }
 
   void onDelete(int index) {
     print('OnDelete $index');
