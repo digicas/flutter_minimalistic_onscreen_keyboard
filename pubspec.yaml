@@ -1,6 +1,6 @@
 name: on_screen_keyboard
 description: On screen keyboard package for flutter web 
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/digicas/flutter_minimalistic_onscreen_keyboard
 publish_to: none
 
