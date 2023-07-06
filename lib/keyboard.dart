@@ -91,7 +91,6 @@ class _OnScreenKeyboardState<T> extends State<OnScreenKeyboard<T>> {
                       shownKey = null;
                       shownKeyPosition = null;
                       shownTileSize = null;
-                      return;
                     }
                     if (shownKey == OnScreenKeyboard.specialChar) {
                       widget.controller.onDelete(
