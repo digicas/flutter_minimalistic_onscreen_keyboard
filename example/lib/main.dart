@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'On-Screen minimalistic numerical keyboard demo'),
+      home: const MyHomePage(
+          title: 'On-Screen minimalistic numerical keyboard demo'),
     );
   }
 }
@@ -54,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
